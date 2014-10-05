@@ -31,6 +31,7 @@ import unittest
 
 
 sys.path.insert(0, "")
+saved = sys.stdout
 
 class auto_grader(unittest.TestCase):
     """The base auto_grader class.  It has all of the built in functionality to
@@ -157,15 +158,16 @@ class auto_grader(unittest.TestCase):
             return
 
 
-def test_assignment(subclass, good_names, student_name,
+def test_assignment(subclass, good_names, stud_name,
                      module_name, mod_path, grade_path,
                      stdout=False):
+    global student_name
+    student_name = stud_name
     try:
         subclass.good_func_names(good_names)
         subclass.get_names(student_name, module_name, mod_path)
-
+        
         if stdout:
-            saved = sys.stdout
             sys.stdout = subclass
 
         with open(grade_path, "w") as f:
@@ -179,9 +181,6 @@ def test_assignment(subclass, good_names, student_name,
         sys.stdout = saved
         print "Test of student {}'s homework failed".format(student_name)
         print e
-
-    finally:
-        sys.stdout = saved
 
 
 if __name__ == "__main__":

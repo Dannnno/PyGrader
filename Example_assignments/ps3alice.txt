@@ -1,0 +1,43 @@
+Alice
+Base class for autograding Python homework ... ERROR
+Base class for autograding Python homework ... ERROR
+Base class for autograding Python homework ... ERROR
+
+======================================================================
+ERROR: Base class for autograding Python homework
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "example.py", line 41, in test_func1
+    func1 = example_test_class.black_magic("func1")
+  File "C:\Users\Dan\Desktop\Programming\GitHub\PyGrader\auto_grader.py", line 153, in black_magic
+    locals())
+  File "<string>", line 1, in <module>
+KeyError: 'Alice'
+
+======================================================================
+ERROR: Base class for autograding Python homework
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "example.py", line 48, in test_func2
+    func2 = example_test_class.black_magic("func2")
+  File "C:\Users\Dan\Desktop\Programming\GitHub\PyGrader\auto_grader.py", line 153, in black_magic
+    locals())
+  File "<string>", line 1, in <module>
+KeyError: 'Alice'
+
+======================================================================
+ERROR: Base class for autograding Python homework
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "example.py", line 55, in test_printing
+    printing_function = example_test_class.black_magic("printer")
+  File "C:\Users\Dan\Desktop\Programming\GitHub\PyGrader\auto_grader.py", line 153, in black_magic
+    locals())
+  File "<string>", line 1, in <module>
+KeyError: 'Alice'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.010s
+
+FAILED (errors=3)
+
