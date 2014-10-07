@@ -4,19 +4,10 @@ Tests func1 ... ok
 Base class for autograding Python homework
 Tests func2 ... ok
 Base class for autograding Python homework
-Tests func3 ... FAIL
-
-======================================================================
-FAIL: Base class for autograding Python homework
-Tests func3
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "example.py", line 80, in test_printing
-    ["Hi", "My", "Name", "Is"])
-AssertionError: None != 'Hi'
+Tests func3 ... ok
 
 ----------------------------------------------------------------------
-Ran 3 tests in 0.010s
+Ran 3 tests in 0.001s
 
-FAILED (failures=1)
+OK
 

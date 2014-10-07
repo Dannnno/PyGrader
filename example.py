@@ -31,20 +31,16 @@ import sys
 
 saved = sys.stdout
 
-
 class example_test_class(auto_grader.auto_grader): 
     """An example grader for a certain homework"""
     
     def setUp(self): 
         """Not implemented - Sets up the program"""
-        self.test_out = auto_grader.test_std_out()
-        sys.stdout = self.test_out
-        #pass
+        pass
     
     def tearDown(self): 
         """Not implemented - 'tears down' the program"""
-        sys.stdout = saved
-        #pass
+        pass
     
     def test_func1(self):
         """Tests func1"""
@@ -66,25 +62,13 @@ class example_test_class(auto_grader.auto_grader):
         """Tests func3"""
         printing_function = example_test_class.black_magic("printer")
         
-        #self.test_out.write(self.test_out.written)
-        #self.test_out.write(self.test_out.written[-1:-4])
-        sys.stdout = saved
-        print self.test_out
-        print self.test_out.written
-        print self.test_out.written[len(self.test_out.written)-4:]    
-        sys.stdout = self.test_out
-        map(self.assertEqual,
-            map(printing_function,
-                ["Hi", "My", "Name", "Is"]),
-            #self.test_out.written[len(self.test_out.written)-4:])
-            ["Hi", "My", "Name", "Is"])
-        sys.stdout = saved
-        print self.test_out
-        print self.test_out.written
-        print self.test_out.written[len(self.test_out.written)-4:]    
-        sys.stdout = self.test_out
-    
-                   
+        with self.capture() as (out, errout):
+            map(self.assertEqual,
+                map(printing_function,
+                    ["Hi", "My", "Name", "Is"]),
+                out)
+            
+                          
 if __name__ == "__main__":
     os.chdir(os.getcwd() + "\\example_assignments" )
     student_names = ["Alice", "Bob", "Dan"]
@@ -101,4 +85,4 @@ if __name__ == "__main__":
                                     submission[1], 
                                     submission[2], 
                                     submission[3])
-                                    
+                                

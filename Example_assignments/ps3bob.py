@@ -1,4 +1,4 @@
-## Bob, a CS student
+## Bob, a bad CS student
 
 def func1(a):
     print a+1

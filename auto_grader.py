@@ -23,26 +23,19 @@ You should have received a copy of the MIT License along with this program.
 If not, see <http://opensource.org/licenses/MIT>
 """
 
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
 from difflib import get_close_matches as gcm
 import abc
+import contextlib
 import sys
 import types
 import unittest
 
 
 sys.path.insert(0, "")
-
-class test_std_out(object):
-    """Implements a stdout for use in testing"""
-    
-    def __init__(self):
-        self.written = []
-        self.saved = sys.stdout
-    
-    def write(self, string):
-        string = string.split()
-        if string:
-            self.written.append(string[0])
         
 
 class auto_grader(unittest.TestCase):
@@ -52,15 +45,20 @@ class auto_grader(unittest.TestCase):
     class.
 
     Grader is asked to subclass this with their own desired functionality.  If
-    capturing printed statements is desired then make sure you import 
-    auto_grader.my_std_out and make that your new stdout
-
-        import sys
-        saved = sys.stdout
-        sys.stdout = auto_grader.test_std_out()
-        
-    If you have specific functionality you want then just implement your own 
-    stdout, or inherit from auto_grader.test_std_out and implement as needed.
+    capturing printed statements is desired then just use the context manager
+    autograder.capture() like so
+    
+        def test_my_func(self):
+            my_func = my_subclass.black_magic(func_name)
+            
+            with self.capture() as (out, err):
+                map(self.assertEqual,
+                    map(my_func,
+                        arglist),
+                    out)
+                    
+    If if this doesn't do exactly you want then just override capture with the 
+    desired functionality.
     
     When implementing your test functions you can just do
 
@@ -76,7 +74,7 @@ class auto_grader(unittest.TestCase):
     Just call
 
         test_assignment(subclass, good_names, student_name,
-                        module_name, mod_path, grade_path [, stdout])
+                        module_name, mod_path, grade_path)
 
     With all of the appropriate arguments.  Loops are ideal.  For example:
 
@@ -84,7 +82,7 @@ class auto_grader(unittest.TestCase):
             test_assignment(subclass, my_names, submission[0],
                             submission[1], submission[2], submission[3])
 
-    Where submission has all of the appropriate data you want.
+    Where submission has all of the data you need.
     """
     good_functions = []
     student_functions = {}
@@ -163,6 +161,20 @@ class auto_grader(unittest.TestCase):
             print "Black magic error:"
             print "\t", e
             return
+            
+    @contextlib.contextmanager
+    def capture(self):
+        oldout, olderr = sys.stdout, sys.stderr
+        
+        try:
+            out=[StringIO(), StringIO()]
+            sys.stdout, sys.stderr = out
+            yield out
+            
+        finally:
+            sys.stdout, sys.stderr = oldout, olderr
+            out[0] = out[0].getvalue()
+            out[1] = out[1].getvalue()
 
 
 def test_assignment(subclass, good_names, stud_name,
