@@ -24,20 +24,30 @@ If not, see <http://opensource.org/licenses/MIT>
 """
 
 import auto_grader
+import glob
 import os
+import sys
+
+
+saved = sys.stdout
+
 
 class example_test_class(auto_grader.auto_grader): 
+    """An example grader for a certain homework"""
     
     def setUp(self): 
-        self.written = []
+        """Not implemented - Sets up the program"""
+        self.test_out = auto_grader.test_std_out()
+        sys.stdout = self.test_out
+        #pass
     
-    def tearDown(self): pass
-    
-    def write(self, string): 
-        string = string.replace(' ', '')
-        if string: self.written.append(string)
+    def tearDown(self): 
+        """Not implemented - 'tears down' the program"""
+        sys.stdout = saved
+        #pass
     
     def test_func1(self):
+        """Tests func1"""
         func1 = example_test_class.black_magic("func1")
         map(self.assertEqual,
             map(func1,
@@ -45,6 +55,7 @@ class example_test_class(auto_grader.auto_grader):
             [1, 2, 3, 4, 5])
             
     def test_func2(self):
+        """Tests func2"""
         func2 = example_test_class.black_magic("func2")
         map(self.assertEqual,
             map(func2,
@@ -52,25 +63,38 @@ class example_test_class(auto_grader.auto_grader):
             ["iH", "yM", "emaN", "sI"])
             
     def test_printing(self):
+        """Tests func3"""
         printing_function = example_test_class.black_magic("printer")
+        
+        #self.test_out.write(self.test_out.written)
+        #self.test_out.write(self.test_out.written[-1:-4])
+        sys.stdout = saved
+        print self.test_out
+        print self.test_out.written
+        print self.test_out.written[len(self.test_out.written)-4:]    
+        sys.stdout = self.test_out
         map(self.assertEqual,
             map(printing_function,
                 ["Hi", "My", "Name", "Is"]),
-            self.written[-1:-4])
-     
+            #self.test_out.written[len(self.test_out.written)-4:])
+            ["Hi", "My", "Name", "Is"])
+        sys.stdout = saved
+        print self.test_out
+        print self.test_out.written
+        print self.test_out.written[len(self.test_out.written)-4:]    
+        sys.stdout = self.test_out
+    
                    
 if __name__ == "__main__":
     os.chdir(os.getcwd() + "\\example_assignments" )
     student_names = ["Alice", "Bob", "Dan"]
     module_names = ["ps3alice","ps3bob", "ps3dan"]
-    filepaths = [filename 
-                 for filename in os.listdir(os.getcwd())]
-    writepaths = [filepath[:-3]+".txt" for filepath in filepaths]
+    writepaths = [name[:-2]+"txt" 
+                  for name in [filename for filename in glob.glob("*.py")]]
     
-    submissions = zip(student_names, module_names, filepaths, writepaths)
+    submissions = zip(student_names, module_names, [os.getcwd()]*3, writepaths)
     
     for submission in submissions:
-        globals()["test"] = __import__("ps3alice")
         auto_grader.test_assignment(example_test_class, 
                                     ["func1", "func2", "printer"], 
                                     submission[0],

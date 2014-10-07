@@ -31,7 +31,19 @@ import unittest
 
 
 sys.path.insert(0, "")
-saved = sys.stdout
+
+class test_std_out(object):
+    """Implements a stdout for use in testing"""
+    
+    def __init__(self):
+        self.written = []
+        self.saved = sys.stdout
+    
+    def write(self, string):
+        string = string.split()
+        if string:
+            self.written.append(string[0])
+        
 
 class auto_grader(unittest.TestCase):
     """The base auto_grader class.  It has all of the built in functionality to
@@ -40,15 +52,16 @@ class auto_grader(unittest.TestCase):
     class.
 
     Grader is asked to subclass this with their own desired functionality.  If
-    capturing printed statements is desired then run
+    capturing printed statements is desired then make sure you import 
+    auto_grader.my_std_out and make that your new stdout
 
-        test_assignment(*args, stdout=True)
-
-    and make sure your subclass has the write method implemented appropriately
-    (however you're going to be checking for values).  write is implemented as an
-    abstract method, so all subclasses will have to implement it somehow (just
-    use pass if you don't need it)
-
+        import sys
+        saved = sys.stdout
+        sys.stdout = auto_grader.test_std_out()
+        
+    If you have specific functionality you want then just implement your own 
+    stdout, or inherit from auto_grader.test_std_out and implement as needed.
+    
     When implementing your test functions you can just do
 
         def test_some_func(self, args):
@@ -85,11 +98,6 @@ class auto_grader(unittest.TestCase):
     def tearDown(self):
         """What should happen while tearing down the tests"""
 
-    @abc.abstractmethod
-    def write(self, string):
-        """This replaces your sys.stdout as necessary.  If you don't need to
-        catch values in print then just have this method pass"""
-
     @classmethod
     def __str__(cls):
         return "Base class for autograding Python homework"
@@ -112,7 +120,7 @@ class auto_grader(unittest.TestCase):
         """Gets the function names the student used"""
 
         sys.path[0] = filepath
-        globals()["Student"] = __import__(mod_name)
+        globals()["Student"] = __import__(mod_name, globals(), locals())
         cls.names = [globals()["Student"].__dict__.get(var).__name__
                       for var in dir(globals()["Student"])
                       if (isinstance(globals()["Student"].__dict__.get(var),
@@ -120,16 +128,17 @@ class auto_grader(unittest.TestCase):
                           isinstance(globals()["Student"].__dict__.get(var),
                                      types.ClassType))]
 
-        for name in cls.names:
-            match = gcm(name, cls.good_functions)
+        for name in cls.good_functions:
+            match = gcm(name, cls.names)
             if match:
                 cls.student_functions[name] = match[0]
             else:
                 cls.student_functions[name] = name
+            
 
     @classmethod
     def black_magic(cls, func_name):
-        """Warning - black magic ahead (all functions)
+        """Warning - black magic ahead
         We're executing a string.
 
         It assigns the name value to the output of the following expresson.  The
@@ -147,29 +156,24 @@ class auto_grader(unittest.TestCase):
         """
 
         try:
-            exec(''.join(["value = globals()[student_name].",
-                           cls.student_functions[func_name]]),
-                 globals(),
-                 locals())
+            exec(''.join(["value = globals()['Student'].", func_name]), globals(), locals())
 
             return value
         except AttributeError as e:
-            print e
+            print "Black magic error:"
+            print "\t", e
             return
 
 
 def test_assignment(subclass, good_names, stud_name,
-                     module_name, mod_path, grade_path,
-                     stdout=False):
+                     module_name, mod_path, grade_path):
     global student_name
     student_name = stud_name
+    
     try:
         subclass.good_func_names(good_names)
         subclass.get_names(student_name, module_name, mod_path)
         
-        if stdout:
-            sys.stdout = subclass
-
         with open(grade_path, "w") as f:
             f.write(student_name)
             f.write("\n")
@@ -178,7 +182,6 @@ def test_assignment(subclass, good_names, stud_name,
             f.write("\n")
 
     except Exception as e:
-        sys.stdout = saved
         print "Test of student {}'s homework failed".format(student_name)
         print e
 

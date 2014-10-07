@@ -1,0 +1,40 @@
+Bob
+Base class for autograding Python homework
+Tests func1 ... FAIL
+Base class for autograding Python homework
+Tests func2 ... FAIL
+Base class for autograding Python homework
+Tests func3 ... FAIL
+
+======================================================================
+FAIL: Base class for autograding Python homework
+Tests func1
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "example.py", line 55, in test_func1
+    [1, 2, 3, 4, 5])
+AssertionError: None != 1
+
+======================================================================
+FAIL: Base class for autograding Python homework
+Tests func2
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "example.py", line 63, in test_func2
+    ["iH", "yM", "emaN", "sI"])
+AssertionError: '' != 'iH'
+
+======================================================================
+FAIL: Base class for autograding Python homework
+Tests func3
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "example.py", line 80, in test_printing
+    ["Hi", "My", "Name", "Is"])
+AssertionError: None != 'Hi'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.012s
+
+FAILED (failures=3)
+

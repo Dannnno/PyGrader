@@ -1,4 +1,4 @@
-Alice
+Dan
 Base class for autograding Python homework
 Tests func1 ... ok
 Base class for autograding Python homework
@@ -16,7 +16,7 @@ Traceback (most recent call last):
 AssertionError: None != 'Hi'
 
 ----------------------------------------------------------------------
-Ran 3 tests in 0.016s
+Ran 3 tests in 0.010s
 
 FAILED (failures=1)
 
